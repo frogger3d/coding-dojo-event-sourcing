@@ -36,6 +36,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -168,6 +169,7 @@
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\ViewSwitcherController.cs" />
+    <Compile Include="Events\RSVPCancelled.cs" />
     <Compile Include="Events\IEventData.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

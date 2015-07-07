@@ -49,8 +49,17 @@ namespace NerdDinner.Controllers
         // AJAX: /RSVP/Cancel/1
 
         [Authorize, HttpPost]
-        public ActionResult Cancel(int id) {
-            throw new NotImplementedException("Infi Coding Dojo TODO");
+        public ActionResult Cancel(int id)
+        {
+            Dinner dinner = dinnerRepository.Find(id);
+            NerdIdentity nerd = (NerdIdentity)User.Identity;
+            var publishedEvents = dinner.CancelRSVP(nerd.Name, nerd.FriendlyName);
+
+            dinnerRepository.StoreEvents(publishedEvents);
+
+            dinnerRepository.SubmitChanges();
+
+            return Content("Thanks - your RSVP is cancelled");
         }
 
         

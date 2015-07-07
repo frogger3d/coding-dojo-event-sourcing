@@ -126,6 +126,24 @@ namespace NerdDinner.Models
             }
         }
 
+        public ICollection<Event> CancelRSVP(string name, string friendlyName)
+        {
+            if (!IsUserRegistered(name))
+            {
+                return new List<Event>();
+            }
+
+            var cancelEvent = new RSVPCancelled
+            {
+                Name = name,
+                FriendlyName = friendlyName,
+                DinnerId = this.DinnerID
+            };
+
+            RaiseAndApply(cancelEvent);
+
+            return this._publishedEvents.ToList();
+        }
 
         private void RaiseAndApply(IEventData eventData) {
             var @event = MakeEvent(eventData);
@@ -160,10 +178,19 @@ namespace NerdDinner.Models
             rsvp.AttendeeName = @event.Data.FriendlyName;
             rsvp.AttendeeNameId = @event.Data.Name;
             _rsvps.Add(rsvp);
+        }       
+
+        void ApplyEvent(Event<RSVPCancelled> @event)
+        {
+            var data = @event.Data;
+            var rsvp = _rsvps.SingleOrDefault(x => x.DinnerID == data.DinnerId &&
+                                                   x.AttendeeName == data.Name);
+            if (rsvp != null)
+            {
+                _rsvps.Remove(rsvp);
+            }
         }
-
         
-
         public void Hydrate(ICollection<Event> events)
         {
             foreach (var e in events.Where(e => e.AggregateEventSequence >= _currentEvent).OrderBy(e => e.AggregateEventSequence))
