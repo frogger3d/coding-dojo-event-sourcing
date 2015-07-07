@@ -178,7 +178,9 @@ namespace NerdDinner.Models
             rsvp.AttendeeName = @event.Data.FriendlyName;
             rsvp.AttendeeNameId = @event.Data.Name;
             _rsvps.Add(rsvp);
-        }       
+
+            this._eventHistory.Add(string.Format("{0} RSVPed", rsvp.AttendeeName));
+        }
 
         void ApplyEvent(Event<RSVPCancelled> @event)
         {
@@ -188,6 +190,7 @@ namespace NerdDinner.Models
             if (rsvp != null)
             {
                 _rsvps.Remove(rsvp);
+                this._eventHistory.Add(string.Format("{0} canceled", rsvp.AttendeeName));
             }
         }
         
