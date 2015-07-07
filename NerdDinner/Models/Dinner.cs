@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Authentication;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.Providers.Entities;
 using NerdDinner.Events;
@@ -145,6 +146,19 @@ namespace NerdDinner.Models
             return this._publishedEvents.ToList();
         }
 
+        public ICollection<Event> ChangeAddress(string newAddress, string changeReason)
+        {
+            var changeAddressEvent = new AddressChanged
+            {
+                DinnerID = this.DinnerID,
+                NewAddress = newAddress,
+                ChangeReason = changeReason
+            };
+
+            RaiseAndApply(changeAddressEvent);
+            return this._publishedEvents.ToList();
+        }
+
         private void RaiseAndApply(IEventData eventData) {
             var @event = MakeEvent(eventData);
             RaiseEvent(@event);
@@ -193,6 +207,21 @@ namespace NerdDinner.Models
                 this._eventHistory.Add(string.Format("{0} canceled", rsvp.AttendeeName));
             }
         }
+
+        void ApplyEvent(Event<AddressChanged> @event)
+        {
+            var data = @event.Data;
+            this.Address = data.NewAddress;
+
+            var builder = new StringBuilder();
+            builder.AppendFormat("Address changed to: {0}", data.NewAddress.Trim());
+            if(!string.IsNullOrEmpty(data.ChangeReason))
+            {
+                builder.AppendFormat(", because of: {0}", data.ChangeReason.Trim());
+            }
+
+            this._eventHistory.Add(builder.ToString());
+        }
         
         public void Hydrate(ICollection<Event> events)
         {
@@ -211,9 +240,7 @@ namespace NerdDinner.Models
                 dinner.Hydrate(events.Where(e => e.AggregateId == dinner.DinnerGuid).ToList());
             }
             return dinners;
-        }
-
-
+        }     
     }
 
     public class LocationDetail
