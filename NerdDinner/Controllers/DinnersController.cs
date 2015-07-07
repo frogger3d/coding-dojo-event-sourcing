@@ -253,9 +253,10 @@ namespace NerdDinner.Controllers {
 
             var publishedEvents = dinner.ChangeAddress(newAddress, changedReason);
             dinnerRepository.StoreEvents(publishedEvents);
-            dinnerRepository.SubmitChanges();            
+            dinnerRepository.SubmitChanges();
 
-            return View("Address Changed");
+            //return View("Address Changed");
+            return RedirectToAction("Details", new { id = id });
         }
     }
 }
