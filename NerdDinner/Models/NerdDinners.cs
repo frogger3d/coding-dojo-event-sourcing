@@ -29,6 +29,8 @@ namespace NerdDinner.Models
         
         public DbSet<Event> Events { get; set; }
 
+        public DbSet<DinnerAttendance> DinnerAttendance { get; set; }
+
         readonly static List<Action<NerdDinners,Event>> _eventPublishedHandlers = new List<Action<NerdDinners,Event>>();
 
         public static void OnEventsPublished(Action<NerdDinners,Event> handler) {
